@@ -1,0 +1,7 @@
+import pandas as pd
+
+# Cargar la base de datos en Panda
+df = pd.read_csv("prendas.csv")
+
+# Imprimir el DataFrame
+print(df)
