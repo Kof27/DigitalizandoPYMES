@@ -14,79 +14,29 @@ from tkinter import simpledialog
 ventas = []
 usuarios = { "D": "1",  }
 def InicioSesion(usuarios):
-
-    
     usuario_ingresado = Nombre_usuario_String.get()
     contraseña_ingresada = Contraseña_usuario_String.get()
-    while True:
         # Solicitar al usuario que ingrese un nombre de usuario
-        nombre_usuario = usuario_ingresado
+    
 
         # Verificar si el nombre de usuario ya existe en el diccionario
-        if nombre_usuario in usuarios:
-            print("¡Bienvenido de nuevo, {}!".format(nombre_usuario))
-            # Verificar la contraseña
-            if contraseña_ingresada == usuarios[nombre_usuario]:
-                messagebox.showinfo(title = " ", message = "bienvenido")
-                break
-            else:
-                messagebox.showerror(title = " ", message = "Contraseña o usuario incorrecto")
-                print("Contraseña incorrecta. Intenta de nuevo.")
-                break
-        #else:
-         #   print("Nombre de usuario no encontrado. Crearemos uno nuevo.")
-          #  contrasena = input("Crea una contraseña: ")
-           # usuarios[nombre_usuario] = contrasena
-            #print("¡Cuenta creada con éxito!")
-
-        # Preguntar si el usuario desea modificar la contraseña
-       # cambiar_contrasena = input("¿Deseas cambiar tu contraseña? (Sí/No): ")
-        #if cambiar_contrasena.lower() == "si":
-         #   nueva_contrasena = input("Ingresa tu nueva contraseña: ")
-          #  usuarios[nombre_usuario] = nueva_contrasena
-           # print("Contraseña modificada con éxito.")
-
-        # Preguntar si el usuario desea salir del programa
-        #salir = input("¿Quieres salir del programa? (Sí/No): ")
-        #if salir.lower() == "si":
-         #   break
-
+    if usuario_ingresado in usuarios:
+        if contraseña_ingresada == usuarios[usuario_ingresado]:
+            messagebox.showinfo(title = " ", message = "bienvenido")
+           
+        elif contraseña_ingresada != usuarios[usuario_ingresado]:
+            messagebox.showerror(title = " ", message = "Contraseña o usuario incorrecto")
+            
+            
     
 def crear_usuario(nombre_usuario, contraseña, usuarios):
     if nombre_usuario in usuarios:
-        print("El nombre de usuario ya existe.")
+        messagebox.showerror(message = "El nombre de usuario ya existe.")
+        Interfaz_Registro()
     else:
         usuarios[nombre_usuario] = contraseña
-        print("¡Usuario creado con éxito!")
-
-def Interfaz_Registro():
-    # Crear una nueva ventana para el registro
-    ventana_registro = Toplevel(Pantalla_principal)
-    ventana_registro.title("Registro de Usuario")
-    ventana_registro.geometry("600x600")
-    ventana_registro.resizable(False,False)
-    
-    marco_registro = Frame(ventana_registro)
-    marco_registro.pack(pady=20)
-
-    nombre_label = Label(marco_registro, text="Nombre de usuario", font="consola 12")
-    nombre_label.pack()
-
-    nombre_usuario_registro = StringVar()
-    entry_nombre_usuario = Entry(marco_registro, width=20, textvariable=nombre_usuario_registro)
-    entry_nombre_usuario.pack()
-
-    contraseña_label = Label(marco_registro, text="Contraseña", font="consola 12")
-    contraseña_label.pack()
-
-    contraseña_registro = StringVar()
-    entry_contraseña_registro = Entry(marco_registro, width=20, textvariable=contraseña_registro, show="*")
-    entry_contraseña_registro.pack()
-
-    Enviar_Datos = Button(ventana_registro, text = "Registrarse", command = lambda: crear_usuario(nombre_usuario_registro.get(),contraseña_registro.get(),usuarios))
-    Enviar_Datos.pack()
-    # Aquí llamamos a la función para crear el usuario
-    crear_usuario(nombre_usuario_registro.get(), contraseña_registro.get(), usuarios)
+        messagebox.showinfo(message = "¡Usuario creado con éxito!")
+        
 
 def Ingreso_Ropa():
     Ingresar_Ropa = str(input("¿Desea ingresar nuevos producto?s [S/N]"))
@@ -167,13 +117,41 @@ def Generar_Venta():
         
 
 #Interfaz funciones
+def Interfaz_Registro():
+    # Crear una nueva ventana para el registro
+    ventana_registro = Toplevel(Pantalla_principal)
+    ventana_registro.title("Registro de Usuario")
+    ventana_registro.geometry("200x200")
+    ventana_registro.resizable(False,False)
+    
+    marco_registro = Frame(ventana_registro)
+    marco_registro.pack(pady=20)
+
+    nombre_label = Label(marco_registro, text="Nombre de usuario", font="consola 12")
+    nombre_label.pack()
+
+    nombre_usuario_registro = StringVar()
+    entry_nombre_usuario = Entry(marco_registro, width=20, textvariable=nombre_usuario_registro)
+    entry_nombre_usuario.pack()
+
+    contraseña_label = Label(marco_registro, text="Contraseña", font="consola 12")
+    contraseña_label.pack()
+
+    contraseña_registro = StringVar()
+    entry_contraseña_registro = Entry(marco_registro, width=20, textvariable=contraseña_registro, show="*")
+    entry_contraseña_registro.pack()
+
+    Enviar_Datos = Button(ventana_registro, text = "Registrarse", command = lambda: [crear_usuario(nombre_usuario_registro.get(),contraseña_registro.get(),usuarios), ventana_registro.destroy()])#El ventana_registro.destroy() es para cerrar la pestaña despues de dar el boton 
+
+    Enviar_Datos.pack()
+    
 
 #==============================ROOT INTERFAZ======================
 Pantalla_principal = Tk()
 Pantalla_principal.title("Programa")
 
     #Propiedades de la pantalla principal
-Pantalla_principal.geometry("700x500")
+Pantalla_principal.geometry("300x300")
 Pantalla_principal.resizable(False,False)
 #=================================================================
 
@@ -203,7 +181,7 @@ string_entry_usuario = Entry(marco1, width = 20, textvariable = Nombre_usuario_S
     #Contraseña
 Contraseña_usuario = Label(marco1, text = "Contraseña", font= "consola 12") .pack()
 Contraseña_usuario_String = StringVar()
-string_entry_Contraseña = Entry(marco1, width = 20, textvariable = Contraseña_usuario_String).pack()
+string_entry_Contraseña = Entry(marco1, width = 20, textvariable = Contraseña_usuario_String, show="*").pack()
 
     #Iniciar sesion
 Boton_Iniciar_Sesion = Button(marco1, text = "Iniciar sesión", command = lambda: InicioSesion(usuarios))
