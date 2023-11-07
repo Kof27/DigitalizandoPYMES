@@ -2,11 +2,12 @@ from prendas import *
 from tkinter import *
 from tkinter import messagebox
 from tkinter import simpledialog
-
+import tkinter as tk
 #-------------------
 #PRUEBA DE INTERFAZ
 #------------------
 
+#Variables globales
 #=============================================================
 #DA
 #Funciones del programa
@@ -39,37 +40,81 @@ def crear_usuario(nombre_usuario, contraseña, usuarios):
         
 
 def Ingreso_Ropa():
-    Ingresar_Ropa = str(input("¿Desea ingresar nuevos producto?s [S/N]"))
-    if Ingresar_Ropa.upper() == "S":
-        marca = input(str("Introduce la marca: "))
-        tipo = input(str("Introduce el tipo de prenda:"))
-        color = input(str("Introduce el color de la prenda: "))
-        talla = input(str("Introduce la talla de la prenda: "))
+    marca = Marca_prenda_input.get()
+    tipo = Tipo_prenda_input.get()
+    color = Color_prenda_input.get()
+    talla = Talla_prenda_input.get()
             
-        Prenda_Nueva = Prendas(marca,tipo,color,talla)
-        Prenda_Nueva.Asignar_Codigo()
+    Prenda_Nueva = Prendas(marca,tipo,color,talla)
+    Prenda_Nueva.Asignar_Codigo()
+    messagebox.showinfo(title = "", message = "Prenda añadida con exito")
 
         
         #Imprimir prendas creadas
-        for prenda in Prendas.Prendas_Creadas:
-            print(f"Marca: {prenda.marca}, Tipo: {prenda.tipo}, Color: {prenda.color}, Talla: {prenda.talla}, Código: {prenda.Asignar_Codigo()}")
-    elif Ingresar_Ropa == "N":
-        print("Hasta luego")
-        
-    else:
-        print("Valor no reconocido, vuelve a intentar")
-        
-def Buscar_Prenda_Por_Codigo():
-    Codigo_a_buscar = input(str("Introduce el codigo de la prenda que buscas "))
-    
     for prenda in Prendas.Prendas_Creadas:
-        if prenda.Asignar_Codigo() == Codigo_a_buscar:
-            print(f"Prenda encontrada - Marca: {prenda.marca}, "
-                    f"Tipo: {prenda.tipo}, Color: {prenda.color}, "
-                    f"Talla: {prenda.talla}, Código: {prenda.Asignar_Codigo()}")
-            return
-        else:
-            print("Prenda no encontrada")
+            print(f"Marca: {prenda.marca}, Tipo: {prenda.tipo}, Color: {prenda.color}, Talla: {prenda.talla}, Código: {prenda.Asignar_Codigo()}")
+
+        
+# Declaración global de la variable
+
+
+def Inventario_prendas():
+    Inventario_Interfaz = Tk()
+    Inventario_Interfaz.geometry("600x400")
+    
+    Inventario = LabelFrame(Inventario_Interfaz, text = "Prendas guardadas")
+    Inventario.pack()
+    
+    Inventario_publico = Text(Inventario, wrap=WORD, font = "Consola 12")
+    Inventario_publico.pack(expand=YES, fill=BOTH)
+
+    for prenda in Prendas.Prendas_Creadas:
+        # Construir una cadena con información sobre la prenda
+        info_str = f"Marca: {prenda.marca}, Tipo: {prenda.tipo}, Color: {prenda.color}, Talla: {prenda.talla}, Código: {prenda.Asignar_Codigo()}"
+        # Insertar la cadena en el widget Text
+        Inventario_publico.insert(END, info_str + "\n")
+
+    
+    
+    Inventario_Interfaz.mainloop()
+
+
+
+aux = "gre"
+
+
+def Mostrar_detalles():
+        
+    codigo_buscado = codigo_buscado_var.get()
+    
+    print("Código a buscar:", repr(codigo_buscado))  # Utilizar respr() para imprimir caracteres especiales
+
+    print(Prendas.Prendas_Creadas)
+    # Variable para realizar un seguimiento de si se encontró una coincidencia
+    encontrada_coincidencia = False
+
+    for prenda in Prendas.Prendas_Creadas:
+        print("Código de la prenda:", repr(prenda.Asignar_Codigo()))
+
+        if prenda.Asignar_Codigo() == codigo_buscado:
+            ventana_detalle = Toplevel()
+            ventana_detalle.geometry("300x200")
+            ventana_detalle.title("Detalles de la prenda")
+
+            Label(ventana_detalle, text=f"Tipo: {prenda.tipo}").pack()
+            Label(ventana_detalle, text=f"Color: {prenda.color}").pack()
+            Label(ventana_detalle, text=f"Marca: {prenda.marca}").pack()
+            Label(ventana_detalle, text=f"Talla: {prenda.talla}").pack()
+            Label(ventana_detalle, text=f"Código: {prenda.Asignar_Codigo()}").pack()
+
+            # Marcamos que se encontró una coincidencia y rompemos el bucle
+            encontrada_coincidencia = True
+            break
+
+    # Después de recorrer toda la lista, si no se encontró ninguna coincidencia, mostrar el mensaje
+    if not encontrada_coincidencia:
+        messagebox.showerror("Búsqueda de Prenda", "Prenda no encontrada")
+
 
 def Generar_Venta():
     # Solicitar el nombre del cliente
@@ -151,49 +196,104 @@ Pantalla_principal = Tk()
 Pantalla_principal.title("Programa")
 
     #Propiedades de la pantalla principal
-Pantalla_principal.geometry("300x300")
-Pantalla_principal.resizable(False,False)
+#Pantalla_principal.geometry("900x500")
+Pantalla_principal.resizable(True,True)
 #=================================================================
-
+codigo_buscado_var = StringVar()
 
 
 #==============================FRAMES======================
-marco1 = Frame(Pantalla_principal)
-marco1.pack(pady = 20)
+textoIngreso = Frame(Pantalla_principal)
+textoIngreso.pack(fill=X)
 
-marco2 = Frame(Pantalla_principal)
-marco2.pack(pady = 5)
-
-marco3 = Frame(Pantalla_principal)
-marco3.pack(pady = 5)
 #=================================================================
 
 #==============================PESTAÑAS======================
     #Inicio sesión
-Inicio_Sesion = Label(marco1, text = "Iniciar sesión", font = "Consola 14 bold")
-Inicio_Sesion.pack()
+Inicio_Sesion = Label(textoIngreso, text = "Iniciar sesión", font = "Consola 14 bold")
+Inicio_Sesion.grid(row=0, column=1, columnspan=2)
 
     #Nombre 
-Nombre_usuario = Label(marco1, text = "Nombre de usuario", font= "consola 12") .pack()
+Nombre_usuario = Label(textoIngreso, text = "Nombre de usuario", font= "consola 12")
+Nombre_usuario.grid(row=1, column=1,padx= 5)
 Nombre_usuario_String = StringVar()
-string_entry_usuario = Entry(marco1, width = 20, textvariable = Nombre_usuario_String).pack()
+string_entry_usuario = Entry(textoIngreso, textvariable = Nombre_usuario_String)
+string_entry_usuario.grid(row=1, column=2)
 
     #Contraseña
-Contraseña_usuario = Label(marco1, text = "Contraseña", font= "consola 12") .pack()
+Contraseña_usuario = Label(textoIngreso, text = "Contraseña", font= "consola 12")
+Contraseña_usuario.grid(row=2, column=1)
 Contraseña_usuario_String = StringVar()
-string_entry_Contraseña = Entry(marco1, width = 20, textvariable = Contraseña_usuario_String, show="*").pack()
+string_entry_Contraseña = Entry(textoIngreso,  textvariable = Contraseña_usuario_String, show="*")
+string_entry_Contraseña.grid(row=2, column=2)
 
     #Iniciar sesion
-Boton_Iniciar_Sesion = Button(marco1, text = "Iniciar sesión", command = lambda: InicioSesion(usuarios))
-Boton_Iniciar_Sesion.pack(pady = 10)
-Boton_Registrarse = Button(marco1, text = "Registarse", command = Interfaz_Registro)
-Boton_Registrarse.pack(pady = 2)
+Boton_Iniciar_Sesion = Button(textoIngreso, text = "Iniciar sesión", command = lambda: InicioSesion(usuarios))
+Boton_Iniciar_Sesion.grid(row=3, column=1)
+Boton_Registrarse = Button(textoIngreso, text = "Registarse", command = Interfaz_Registro)
+Boton_Registrarse.grid(row=3, column=2)
 
 #=================================================================
 
+#==============================MENU======================
+menu = Frame (pady= 40)
+menu.pack(side=TOP, fill=X)
+
+Codigo_buscado_ingresado = StringVar()
+#==============INGRESAR UNA PRENDA================
+codigo_buscado_var = StringVar()
+
+Opcion1_Frame = LabelFrame(menu, width=50, height=80)
+Opcion1_Frame.grid(row=0, column=0, pady=5, padx=10, sticky="ns")
+
+Label(Opcion1_Frame, text="Ingresar ropa", font="Arial 14 bold").grid(row=0, column=0, pady=(0, 5))
+
+Buscar_ropa = Frame(Opcion1_Frame)
+Buscar_ropa.grid(row=1, column=0)
+
+Label(Buscar_ropa, text="Introduce el código de la prenda").grid(row=0, column=0, sticky="w")
+Entry(Buscar_ropa, textvariable=codigo_buscado_var).grid(row=0, column=1, padx=6)
+boton_buscar = Button(Buscar_ropa, text="Buscar", command=Mostrar_detalles)
+boton_buscar.grid(row=0, column=2, sticky="e")
+
+Label(Opcion1_Frame, text="Recuerde que debe ser mayúscula al inicio", font="Arial 9").grid(row=2, column=0, pady=3)
+
+
+Label(Opcion1_Frame, text="Marca de la prenda").grid(row=3, column=0, sticky="w", pady=2)
+Marca_prenda_input = StringVar()
+Entry(Opcion1_Frame, textvariable=Marca_prenda_input).grid(row=3, column=0, padx=5, pady=2)
+
+
+Label(Opcion1_Frame, text="Tipo de prenda").grid(row=4, column=0, sticky="w")
+Tipo_prenda_input = StringVar()
+Entry(Opcion1_Frame, textvariable=Tipo_prenda_input).grid(row=4, column=0, padx=10)
+
+Label(Opcion1_Frame, text="Talla de la prenda").grid(row=5, column=0, sticky="w")
+Talla_prenda_input = StringVar()
+Entry(Opcion1_Frame, textvariable=Talla_prenda_input).grid(row=5, column=0, padx=10)
+
+Label(Opcion1_Frame, text="Color de la prenda").grid(row=6, column=0, sticky="w")
+Color_prenda_input = StringVar()
+Entry(Opcion1_Frame, textvariable=Color_prenda_input).grid(row=6, column=0, padx=10)
+
+enviar_Datos_Prenda = Button(Opcion1_Frame, text="Enviar datos", command=Ingreso_Ropa)
+enviar_Datos_Prenda.grid(row=7, column=0, pady=5, padx=3)
+
+Ver_Inventario_boton = Button(Opcion1_Frame, text="Inventario", command=Inventario_prendas)
+Ver_Inventario_boton.grid(row=8, column=0)
+
+
+    #============================================
+
+opcion3 = Label(menu, text ="Venta", font= "Arial 15")
+# opcion3.pack(padx=5, pady=5)
+
+
+#=================================================================
 
 #Bucle principal
 Pantalla_principal.mainloop()
+
 
 
 
