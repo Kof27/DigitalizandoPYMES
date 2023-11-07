@@ -46,7 +46,7 @@ def InicioSesion():
 
 def Ingreso_Ropa():
     
-    Ingresar_Ropa = str(input("¿Desea ingresar nuevos producto?s [S/N]"))
+    Ingresar_Ropa = str(input("¿Desea ingresar nuevos productos? [S/N]"))
     if Ingresar_Ropa.upper() == "S":
         marca = input(str("Introduce la marca: "))
         tipo = input(str("Introduce el tipo de prenda:"))
