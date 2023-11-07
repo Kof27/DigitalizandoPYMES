@@ -3,13 +3,17 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter import simpledialog
 import tkinter as tk
+
 #-------------------
 #PRUEBA DE INTERFAZ
 #------------------
 
-#Variables globales
-#=============================================================
-#DA
+# Variables globales
+# =============================================================
+usuario_autenticado = False
+estado_entry = "disabled"
+
+# =============================================================
 #Funciones del programa
 #Variables fijas
 ventas = []
@@ -24,6 +28,12 @@ def InicioSesion(usuarios):
     if usuario_ingresado in usuarios:
         if contraseña_ingresada == usuarios[usuario_ingresado]:
             messagebox.showinfo(title = " ", message = "bienvenido")
+            #-----------Activar los entrys----------
+            Buscar_ropa_entrada = Entry(Buscar_ropa, textvariable=codigo_buscado_var, state = "normal").grid(row=0, column=1, padx=6)
+            Marca_prenda = Entry(Opcion1_Frame, textvariable=Marca_prenda_input,state = "normal").grid(row=3, column=0, padx=5, pady=2)
+            Tipo_Prenda = Entry(Opcion1_Frame, textvariable=Tipo_prenda_input,state = "normal").grid(row=4, column=0, padx=10)
+            Talla_Prenda = Entry(Opcion1_Frame, textvariable=Talla_prenda_input,state = "normal").grid(row=5, column=0, padx=10)
+            Color_Prenda = Entry(Opcion1_Frame, textvariable=Color_prenda_input, state = "normal").grid(row=6, column=0, padx=10)
            
         elif contraseña_ingresada != usuarios[usuario_ingresado]:
             messagebox.showerror(title = " ", message = "Contraseña o usuario incorrecto")
@@ -53,6 +63,10 @@ def Ingreso_Ropa():
         #Imprimir prendas creadas
     for prenda in Prendas.Prendas_Creadas:
             print(f"Marca: {prenda.marca}, Tipo: {prenda.tipo}, Color: {prenda.color}, Talla: {prenda.talla}, Código: {prenda.Asignar_Codigo()}")
+    Marca_prenda_input.set("")
+    Tipo_prenda_input.set("")
+    Talla_prenda_input.set("")
+    Color_prenda_input.set("")
 
         
 # Declaración global de la variable
@@ -62,25 +76,26 @@ def Inventario_prendas():
     Inventario_Interfaz = Tk()
     Inventario_Interfaz.geometry("600x400")
     
-    Inventario = LabelFrame(Inventario_Interfaz, text = "Prendas guardadas")
-    Inventario.pack()
+    Inventario = LabelFrame(Inventario_Interfaz, text="Prendas guardadas")
+    Inventario.pack(expand=YES, fill=BOTH)
+
+    # Crear el Listbox
+    Inventario_publico = Listbox(Inventario, font="Consolas 12", selectbackground="lightblue", selectmode="extended")
     
-    Inventario_publico = Text(Inventario, wrap=WORD, font = "Consola 12")
+    # Configurar el Scrollbar
+    scrollbar = Scrollbar(Inventario, orient=VERTICAL, command=Inventario_publico.yview)
+    Inventario_publico.configure(yscrollcommand=scrollbar.set)
+    
+    scrollbar.pack(side=RIGHT, fill=Y)
     Inventario_publico.pack(expand=YES, fill=BOTH)
 
     for prenda in Prendas.Prendas_Creadas:
-        # Construir una cadena con información sobre la prenda
-        info_str = f"Marca: {prenda.marca}, Tipo: {prenda.tipo}, Color: {prenda.color}, Talla: {prenda.talla}, Código: {prenda.Asignar_Codigo()}"
-        # Insertar la cadena en el widget Text
-        Inventario_publico.insert(END, info_str + "\n")
+        info_str = f"Marca: {prenda.marca}\n Tipo: {prenda.tipo}\n Color: {prenda.color}\n Talla: {prenda.talla}\n Código: {prenda.Asignar_Codigo()}\n"
+        Inventario_publico.insert(END, info_str)
+        Inventario_publico.insert(END, "")  # Insertar una línea en blanco adicional para separar las prendas
 
-    
-    
     Inventario_Interfaz.mainloop()
 
-
-
-aux = "gre"
 
 
 def Mostrar_detalles():
@@ -241,51 +256,61 @@ menu.pack(side=TOP, fill=X)
 
 Codigo_buscado_ingresado = StringVar()
 #==============INGRESAR UNA PRENDA================
-codigo_buscado_var = StringVar()
 
+#--------- ENTRADAS --------------
+codigo_buscado_var = StringVar()
+Marca_prenda_input = StringVar()
+Tipo_prenda_input = StringVar()
+Talla_prenda_input = StringVar()
+Color_prenda_input = StringVar()
+#------------------------------
+    
+#------Frame principal------------
 Opcion1_Frame = LabelFrame(menu, width=50, height=80)
 Opcion1_Frame.grid(row=0, column=0, pady=5, padx=10, sticky="ns")
+#---------------------------------
 
+#------Opciones----------
 Label(Opcion1_Frame, text="Ingresar ropa", font="Arial 14 bold").grid(row=0, column=0, pady=(0, 5))
 
 Buscar_ropa = Frame(Opcion1_Frame)
 Buscar_ropa.grid(row=1, column=0)
 
 Label(Buscar_ropa, text="Introduce el código de la prenda").grid(row=0, column=0, sticky="w")
-Entry(Buscar_ropa, textvariable=codigo_buscado_var).grid(row=0, column=1, padx=6)
+Buscar_ropa_entrada = Entry(Buscar_ropa, textvariable=codigo_buscado_var, state = "disabled").grid(row=0, column=1, padx=6)
 boton_buscar = Button(Buscar_ropa, text="Buscar", command=Mostrar_detalles)
 boton_buscar.grid(row=0, column=2, sticky="e")
 
 Label(Opcion1_Frame, text="Recuerde que debe ser mayúscula al inicio", font="Arial 9").grid(row=2, column=0, pady=3)
 
-
 Label(Opcion1_Frame, text="Marca de la prenda").grid(row=3, column=0, sticky="w", pady=2)
-Marca_prenda_input = StringVar()
-Entry(Opcion1_Frame, textvariable=Marca_prenda_input).grid(row=3, column=0, padx=5, pady=2)
 
+Marca_prenda = Entry(Opcion1_Frame, textvariable=Marca_prenda_input,state = "disabled").grid(row=3, column=0, padx=5, pady=2)
 
 Label(Opcion1_Frame, text="Tipo de prenda").grid(row=4, column=0, sticky="w")
-Tipo_prenda_input = StringVar()
-Entry(Opcion1_Frame, textvariable=Tipo_prenda_input).grid(row=4, column=0, padx=10)
+
+Tipo_Prenda = Entry(Opcion1_Frame, textvariable=Tipo_prenda_input,state = "disabled").grid(row=4, column=0, padx=10)
 
 Label(Opcion1_Frame, text="Talla de la prenda").grid(row=5, column=0, sticky="w")
-Talla_prenda_input = StringVar()
-Entry(Opcion1_Frame, textvariable=Talla_prenda_input).grid(row=5, column=0, padx=10)
+
+Talla_Prenda = Entry(Opcion1_Frame, textvariable=Talla_prenda_input,state = "disabled").grid(row=5, column=0, padx=10)
 
 Label(Opcion1_Frame, text="Color de la prenda").grid(row=6, column=0, sticky="w")
-Color_prenda_input = StringVar()
-Entry(Opcion1_Frame, textvariable=Color_prenda_input).grid(row=6, column=0, padx=10)
+
+Color_Prenda = Entry(Opcion1_Frame, textvariable=Color_prenda_input, state = "disabled").grid(row=6, column=0, padx=10)
 
 enviar_Datos_Prenda = Button(Opcion1_Frame, text="Enviar datos", command=Ingreso_Ropa)
 enviar_Datos_Prenda.grid(row=7, column=0, pady=5, padx=3)
+#-----------------------------------
 
+#------------Botones-----------------
 Ver_Inventario_boton = Button(Opcion1_Frame, text="Inventario", command=Inventario_prendas)
 Ver_Inventario_boton.grid(row=8, column=0)
-
+#--------------------------------------
 
     #============================================
 
-opcion3 = Label(menu, text ="Venta", font= "Arial 15")
+# opcion3 = Label(menu, text ="Venta", font= "Arial 15")
 # opcion3.pack(padx=5, pady=5)
 
 
