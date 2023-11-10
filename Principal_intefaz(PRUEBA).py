@@ -12,13 +12,15 @@ import tkinter as tk
 # =============================================================
 usuario_autenticado = False
 estado_entry = "disabled"
-
 # =============================================================
-#Funciones del programa
 #Variables fijas
 ventas = []
 usuarios = { "D": "1",  }
-def InicioSesion(usuarios):
+
+#==================FUNCIONES DEL PROGRAMA=========================================
+
+    #---------------Iniciar sesión y creación de usuarios------------------------------
+def InicioSesion(usuarios,Nombre_usuario_String,Contraseña_usuario_String,Iniciar_sesion_interfaz):
     usuario_ingresado = Nombre_usuario_String.get()
     contraseña_ingresada = Contraseña_usuario_String.get()
         # Solicitar al usuario que ingrese un nombre de usuario
@@ -26,7 +28,7 @@ def InicioSesion(usuarios):
 
         # Verificar si el nombre de usuario ya existe en el diccionario
     if usuario_ingresado in usuarios:
-        if contraseña_ingresada == usuarios[usuario_ingresado]:
+        if contraseña_ingresada == usuarios[usuario_ingresado]: #ESTO SOLO COMPRUEBA SI EL USUARIO FUE ENCONTRAD
             messagebox.showinfo(title = " ", message = "bienvenido")
             #-----------Activar los entrys----------
             Buscar_ropa_entrada = Entry(Buscar_ropa, textvariable=codigo_buscado_var, state = "normal").grid(row=0, column=1, padx=6)
@@ -34,12 +36,16 @@ def InicioSesion(usuarios):
             Tipo_Prenda = Entry(Opcion1_Frame, textvariable=Tipo_prenda_input,state = "normal").grid(row=4, column=0, padx=10)
             Talla_Prenda = Entry(Opcion1_Frame, textvariable=Talla_prenda_input,state = "normal").grid(row=5, column=0, padx=10)
             Color_Prenda = Entry(Opcion1_Frame, textvariable=Color_prenda_input, state = "normal").grid(row=6, column=0, padx=10)
-           
+            Iniciar_sesion_interfaz.destroy()
+            
         elif contraseña_ingresada != usuarios[usuario_ingresado]:
-            messagebox.showerror(title = " ", message = "Contraseña o usuario incorrecto")
-            
-            
-    
+            print("sesión incorrecta")
+            messagebox.showerror(title = "", message = "Contraseña incorrecta")
+    else: #si el usuario no se encuentra
+        messagebox.showerror(title = "", message = "Usuario no encontrado")
+        
+          
+
 def crear_usuario(nombre_usuario, contraseña, usuarios):
     if nombre_usuario in usuarios:
         messagebox.showerror(message = "El nombre de usuario ya existe.")
@@ -47,7 +53,8 @@ def crear_usuario(nombre_usuario, contraseña, usuarios):
     else:
         usuarios[nombre_usuario] = contraseña
         messagebox.showinfo(message = "¡Usuario creado con éxito!")
-        
+
+    #------------------------------------------------------      
 
 def Ingreso_Ropa():
     marca = Marca_prenda_input.get()
@@ -68,8 +75,6 @@ def Ingreso_Ropa():
     Talla_prenda_input.set("")
     Color_prenda_input.set("")
 
-        
-# Declaración global de la variable
 
 
 def Inventario_prendas():
@@ -205,10 +210,43 @@ def Interfaz_Registro():
 
     Enviar_Datos.pack()
     
+def Iniciar_sesion():
+    #Inicio sesión
+    global Iniciar_sesion_interfaz
+    Iniciar_sesion_interfaz = tk.Toplevel(Pantalla_principal)
+    Iniciar_sesion_interfaz.attributes('-topmost', True)  # Asegurar que la ventana esté siempre en la parte superior
+    
+    
+    Inicio_Sesion = Label(Iniciar_sesion_interfaz, text = "Iniciar sesión", font = "Consola 14 bold")
+    Inicio_Sesion.grid(row=0, column=1, columnspan=2)
+
+        #Nombre 
+    Nombre_usuario = Label(Iniciar_sesion_interfaz, text = "Nombre de usuario", font= "consola 12")
+    Nombre_usuario.grid(row=1, column=1,padx= 5)
+    Nombre_usuario_String = StringVar()
+    string_entry_usuario = Entry(Iniciar_sesion_interfaz, textvariable = Nombre_usuario_String)
+    string_entry_usuario.grid(row=1, column=2)
+
+        #Contraseña
+    Contraseña_usuario = Label(Iniciar_sesion_interfaz, text = "Contraseña", font= "consola 12")
+    Contraseña_usuario.grid(row=2, column=1)
+    Contraseña_usuario_String = StringVar()
+    string_entry_Contraseña = Entry(Iniciar_sesion_interfaz,  textvariable = Contraseña_usuario_String, show="*")
+    string_entry_Contraseña.grid(row=2, column=2)
+
+        #Iniciar sesion
+    Boton_Iniciar_Sesion = Button(Iniciar_sesion_interfaz, text = "Iniciar sesión", command = lambda: InicioSesion(usuarios,Nombre_usuario_String,Contraseña_usuario_String,Iniciar_sesion_interfaz))
+    Boton_Iniciar_Sesion.grid(row=3, column=1)
+    Boton_Registrarse = Button(Iniciar_sesion_interfaz, text = "Registarse", command = Interfaz_Registro)
+    Boton_Registrarse.grid(row=3, column=2)
+    
+#==========================================================================================
 
 #==============================ROOT INTERFAZ======================
 Pantalla_principal = Tk()
 Pantalla_principal.title("Programa")
+
+
 
     #Propiedades de la pantalla principal
 #Pantalla_principal.geometry("900x500")
@@ -223,32 +261,6 @@ textoIngreso.pack(fill=X)
 
 #=================================================================
 
-#==============================PESTAÑAS======================
-    #Inicio sesión
-Inicio_Sesion = Label(textoIngreso, text = "Iniciar sesión", font = "Consola 14 bold")
-Inicio_Sesion.grid(row=0, column=1, columnspan=2)
-
-    #Nombre 
-Nombre_usuario = Label(textoIngreso, text = "Nombre de usuario", font= "consola 12")
-Nombre_usuario.grid(row=1, column=1,padx= 5)
-Nombre_usuario_String = StringVar()
-string_entry_usuario = Entry(textoIngreso, textvariable = Nombre_usuario_String)
-string_entry_usuario.grid(row=1, column=2)
-
-    #Contraseña
-Contraseña_usuario = Label(textoIngreso, text = "Contraseña", font= "consola 12")
-Contraseña_usuario.grid(row=2, column=1)
-Contraseña_usuario_String = StringVar()
-string_entry_Contraseña = Entry(textoIngreso,  textvariable = Contraseña_usuario_String, show="*")
-string_entry_Contraseña.grid(row=2, column=2)
-
-    #Iniciar sesion
-Boton_Iniciar_Sesion = Button(textoIngreso, text = "Iniciar sesión", command = lambda: InicioSesion(usuarios))
-Boton_Iniciar_Sesion.grid(row=3, column=1)
-Boton_Registrarse = Button(textoIngreso, text = "Registarse", command = Interfaz_Registro)
-Boton_Registrarse.grid(row=3, column=2)
-
-#=================================================================
 
 #==============================MENU======================
 menu = Frame (pady= 40)
@@ -315,9 +327,10 @@ Ver_Inventario_boton.grid(row=8, column=0)
 
 
 #=================================================================
-
+Iniciar_sesion()
 #Bucle principal
 Pantalla_principal.mainloop()
+
 
 
 
